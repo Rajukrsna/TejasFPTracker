@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CO₂ Footprint Calculator</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+</head>
+<style>
+  .container {
+  background-color: transparent !important; /* Ensures no background color */
+  padding: 80px !important; /* Optional: Add padding for better content spacing */
+  box-shadow: none; /* Remove any default shadow if applied */
+}
+  body
+  {
+    font-family: 'Roboto', sans-serif;
+    padding: 20px;
+  }
+  .nav-tabs .nav-link {
+  color: black !important; 
+}
+
+.nav-tabs .nav-link.active {
+  color: yellow !important;
+}
+
+    /* Card styles */
+    .card {
+      border-radius: 15px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Progress bars */
+    .progress-bar {
+      border-radius: 20px;
+      transition: width 0.6s ease-in-out;
+    }
+
+    .progress-bar.bg-primary {
+      background: linear-gradient(to right, #007bff, #5a5af2);
+    }
+
+    .progress-bar.bg-success {
+      background: linear-gradient(to right, #28a745, #8bc34a);
+    }
+
+    .progress-bar.bg-warning {
+      background: linear-gradient(to right, #ffc107, #ff9800);
+    } .container {
+        max-width: 1200px;
+        margin: auto;
+      }
+    
+      .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+    
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+      }
+    
+      .card-body {
+        padding: 30px;
+      }
+    
+      .btn {
+        border-radius: 5px;
+        font-size: 16px;
+      }
+    
+      .progress {
+        height: 20px;
+        border-radius: 10px;
+      }
+    
+      .progress-bar {
+        border-radius: 10px;
+        font-size: 16px;
+      }
+    
+     
+
+    /* Button styles */
+    #stupin {
+      background: #6a1b9a;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      padding: 10px 20px;
+      color: #fff;
+      margin: 2rem 0;
+      
+      transition: background 0.3s ease;
+    }
+
+    #stupin:hover {
+      background: #8e24aa;
+    }
+
+    /* Responsive styling */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .card {
+        margin: 1rem 0;
+      }
+    }
+</style>
+
+
+<body>
+ 
+   <div class="container">
+      <header class="text-center mb-5">
+        <h1 class="mb-3 text-dark">CO₂ Footprint Calculator</h1>
+        <p class="text-muted">Track and manage your CO₂ emissions with ease</p>
+      </header>
+    
+      <div class="row g-4">
+        <!-- Annual CO₂ Footprint Card -->
+        <div class="col-md-4">
+          <div class="card shadow-lg border-light rounded-3">
+            <div class="card-body text-center text-white bg-primary">
+              <h5 class="card-title">Annual CO₂ Footprint</h5>
+              <p class="card-text">
+                <span id="annual-footprint" class="fw-bold display-4">0</span> kg
+              </p>
+            </div>
+          </div>
+        </div>
+    
+        <!-- Monthly CO₂ Footprint Card -->
+        <div class="col-md-4">
+          <div class="card shadow-lg border-light rounded-3">
+            <div class="card-body text-center text-white bg-success">
+              <h5 class="card-title">Monthly CO₂ Footprint</h5>
+              <p class="card-text">
+                <span id="monthly-footprint" class="fw-bold display-4">0</span> kg
+              </p>
+            </div>
+          </div>
+          <button type="button" id="stupin" class="btn btn-primary w-100 mt-3 shadow-sm">
+            <i class="fas fa-upload me-2"></i>Update in Dashboard
+          </button>
+        </div>
+    
+        <!-- Category-wise CO₂ Footprint Progress -->
+        <div class="col-md-4">
+          <div class="card shadow-lg border-light rounded-3">
+            <div class="card-body">
+              <h5 class="card-title text-center text-dark"><i class="fas fa-sync"></i> Category-wise Progress</h5>
+              
+              <!-- Progress Bars -->
+              <div class="mb-3">
+                <label class="form-label small text-muted">Transportation</label>
+                <div class="progress">
+                  <div id="progress-transportation" class="progress-bar bg-primary" role="progressbar" style="width: 0%">0%</div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small text-muted">Energy Use</label>
+                <div class="progress">
+                  <div id="progress-energy" class="progress-bar bg-success" role="progressbar" style="width: 0%">0%</div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small text-muted">Food Consumption</label>
+                <div class="progress">
+                  <div id="progress-food" class="progress-bar bg-warning" role="progressbar" style="width: 0%">0%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    
+    <nav class="nav nav-tabs mb-3" id="category-tabs">
+      <button class="nav-link active " data-bs-toggle="tab" data-category="transportation" data-bs-target="#transportation">    <i class="fas fa-car me-2 text-primary"></i>Transportation</button>
+      <button class="nav-link" data-bs-toggle="tab" data-category="energy" data-bs-target="#energy">     <i class="fas fa-bolt me-2 text-success"></i>Energy Use</button>
+      <button class="nav-link" data-bs-toggle="tab" data-category="food" data-bs-target="#food"><i class="fas fa-utensils me-2 text-warning"></i> Food Consumption</button>
+      <button class="nav-link" data-bs-toggle="tab" data-category="waste" data-bs-target="#waste"> <i class="fas fa-recycle me-2 text-secondary"></i>Waste Management</button>
+    </nav>
+
+    <div class="row mt-4">
+<div class="col-md-4">
+   
+
+    <div class="tab-content">
+      <!-- Transportation Questions -->
+      <div class=" tab-pane fade show active" id="transportation">
+        <h4 class="mb-3">Transportation</h4>
+        <form  class="needs-validation"  >
+          <div class="mb-3">
+            <label for="miles-driven" class="form-label">Miles driven per week:</label>
+            <input type="number" id="miles-driven" name="miles-driven" class="form-control" >
+          </div>
+          <div class="mb-3">
+            <label for="public-transport" class="form-label">What Kind of Transport You often use?:</label>
+            <select class="form-select" id="transport-mode" name="transportation" >
+              <option value="" disabled selected>Select an option</option>
+              <option value="car_petrol">Car (Petrol)</option>
+              <option value="car_diesel">Car (Diesel)</option>
+              <option value="public_transport">Public Transport</option>
+              <option value="bicycle">Bicycle</option>
+              <option value="walk">Walking</option>
+              <option value="electric_vehicle">Electric Vehicle</option>
+          </select>
+          </div>
+          <div class="mb-3">
+            <label for="carpool" class="form-label">Times carpooling per week:</label>
+            <input type="number" id="carpool" name="carpool" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="carpool" class="form-label">Number of Flights this Month</label>
+            <input type="number" id="flights" name="flights" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-primary">Calculate</button>
+        </form>
+      </div>
+
+
+      <!-- Energy Use Questions -->
+      <div class="tab-pane fade" id="energy">
+        <h4 class="mb-3">Energy Use</h4>
+        <form action="/calculate/log" class="needs-validation" method="POST" >
+          <div class="mb-3">
+            <label for="electricity-usage" class="form-label">Electricity usage (kWh per month):</label>
+            <input type="number" id="electricity-usage" name="electricity_usage"  class="form-control" >
+          </div>
+          <div class="mb-3">
+            <label for="natural-gas" class="form-label">Natural gas usage (cubic feet per month):</label>
+            <input type="number" id="natural-gas" name="natural_gas" class="form-control" >
+          </div>
+          <div class="mb-3">
+            <label for="heating-oil" class="form-label">Heating oil usage (gallons per month):</label>
+            <input type="number" id="heating-oil" name="heating_oil" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-primary">Calculate</button>
+        </form>
+      </div>
+<!-- Waste Management Questions -->
+<div class="tab-pane fade" id="waste">
+  <h4 class="mb-3">Waste Management</h4>
+  <form action="/calculate/log" class="needs-validation" method="POST">
+    <div class="mb-3">
+      <label for="recycled-waste" class="form-label">Recycled waste (kg per month):</label>
+      <input type="number" id="recycled-waste" name="recycled_waste" class="form-control" >
+    </div>
+    <div class="mb-3">
+      <label for="non-recycled-waste" class="form-label">Non-recycled waste (kg per month):</label>
+      <input type="number" id="non-recycled-waste" name="non_recycled_waste" class="form-control" >
+    </div>
+    <button type="submit" class="btn btn-primary">Calculate</button>
+  </form>
+</div>
+
+
+      <!-- Food Consumption Questions -->
+      <div class="tab-pane fade" id="food">
+        <h4 class="mb-3">Food Consumption</h4>
+        <form action="/calculate/log" class="needs-validation" method="POST" >
+          <div class="mb-3">
+            <label for="meat-meals" class="form-label">Meat-based meals per week:</label>
+            <input type="number" id="meat-meals"name="meat_meals" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="vegetarian-meals" class="form-label">Vegetarian meals per week:</label>
+            <input type="number" id="vegetarian-meals" name="vegetarian_meals" class="form-control" >
+          </div>
+          <div class="mb-3">
+            <label for="dairy-consumption" class="form-label">Dairy consumption (liters per week):</label>
+            <input type="number" id="dairy-consumption" name="dairy_consumption" class="form-control" >
+          </div>
+          <button type="submit" class="btn btn-primary">Calculate</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card">
+<h2>CO₂ Activity Breakdown</h2>
+<canvas id="myPieChart"></canvas>
+</div>
+</div>
+
+<div class="col-md-4">   
+  <div class="card">
+      <h3>Emission Vs Reduction for <%= new Date().toLocaleString('default', { month: 'long' }) %></h3>
+<canvas id="categoryChart" width="400" height="400"></canvas>
+
+</div>
+</div>
+</div>    
+
+
+  <br>
+     <!-- Card Header -->
+<div class="card-header text-center" style="background-color: #f5f5f5; border-bottom: 1px solid #ddd; padding: 20px; border-top-left-radius: 12px; border-top-right-radius: 12px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+  <h4 style="margin: 0; color: #333; font-weight: 600;">Upload and Analyze CO2 Emission</h4>
+</div>
+<br>
+
+  <div class="row justify-content-center">
+      <!-- Left Column (Image Upload) -->
+      <div class=" card col-md-4">
+          <!-- Uploaded Image Preview -->
+          <div class="uploaded-image-preview text-center mb-4">
+              <h5 class="mb-3" style="font-weight: 500; color: #555;">Upload an Image to Analyze the CO2 Footprint</h5>
+              <img id="uploadedImage" src="https://via.placeholder.com/400x250.png?text=Sample+Image" alt="Uploaded Image Preview" class="img-fluid" style="max-height: 250px; border-radius: 12px; display: block; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" />
+            </div>
+
+          <!-- Upload Form -->
+          <form id="uploadForm" action="/dashboard/waste" method="POST" enctype="multipart/form-data" style="border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; background-color: #fff;">
+              <div class="mb-3">
+                  <input type="file" id="imageInput" class="form-control mb-3" name="image" required accept="image/*" onchange="previewImage(event)">
+              </div>
+              <button type="submit" id="submitButton" class="btn btn-primary w-100" style="background-color: #0062cc; border: none; font-weight: 500;">Upload Image</button>
+          </form>
+      </div>
+
+      <!-- Middle Column (CO2 Emission Analysis) -->
+      <div class="col-md-5">
+          <div class="result-card" id="resultContainer" style="background-color: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
+              <h5 class="result-heading text-center" style="color: #333; margin-bottom: 10px; font-weight: 500;">CO2 Emission Analysis</h5>
+              <p id="suggestion" class="result-suggestion text-center" style="font-size: 16px; font-weight: bold; color: #555;">Awaiting analysis...</p>
+          </div>
+
+        
+      </div>
+
+      <!-- Right Column (Bill Upload) -->
+      <div class=" card col-md-3">
+        <div class="uploaded-image-preview text-center mb-4">
+          <p class="text-center">Extract CO2 Footprint From Bills</p>
+          <img id="uploadedImage2" src="https://via.placeholder.com/400x250.png?text=Sample+Image" alt="Uploaded Image Preview" class="img-fluid" style="max-height: 250px; border-radius: 12px; display: block; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" />
+        </div>
+         
+              <form id="billForm" enctype="multipart/form-data" class="mt-4">
+                  <div class="mb-3">
+                      <input type="file" name="bill" id="bill" class="form-control mt-2" accept="image/*,application/pdf"  onchange="previewImage2(event)"required>
+                  </div>
+                  <div class="text-center">
+                      <button type="submit" class="btn btn-primary btn-lg w-100" style="background-color: #0062cc; border: none;">Submit</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+function previewImage2(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      const uploadedImage = document.getElementById('uploadedImage2');
+
+      reader.onload = function (e) {
+          uploadedImage.src = e.target.result; // Set the preview image source
+          uploadedImage.style.display = 'block'; // Make the image visible
+      };
+
+      if (file) {
+          reader.readAsDataURL(file); // Convert file to data URL
+      }
+  }
+</script>
+
+
+
+<script>
+  function previewImage(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      const uploadedImage = document.getElementById('uploadedImage');
+
+      reader.onload = function (e) {
+          uploadedImage.src = e.target.result; // Set the preview image source
+          uploadedImage.style.display = 'block'; // Make the image visible
+      };
+
+      if (file) {
+          reader.readAsDataURL(file); // Convert file to data URL
+      }
+  }
+</script>
+
+
+  
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+  const billForm = document.getElementById("billForm");
+  const resultMessage = document.getElementById("resultMessage");
+
+  billForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); // Prevent the default form submission
+
+    const formData = new FormData(billForm); // Create FormData object from the form
+
+    try {
+      // Send the form data to the backend
+      const response = await fetch("/ocrDedect/process-bill", {
+        method: "POST",
+        body: formData, // Send FormData (for file uploads)
+      });
+
+      // Handle the response
+      if (response.ok) {
+        const result = await response.json();
+        //console.log(result);
+
+        // Parse the stringified JSON in the 'wasteType' field
+        let data;
+        try {
+            data = JSON.parse(result.wasteType);
+            console.log(data)
+        } catch (parseError) {
+            console.error("Error parsing wasteType:", parseError);
+            resultSuggestion.textContent = "Error parsing CO₂ footprint data.";
+            return;
+        }
+
+       
+// Create the Bootstrap card
+const cardHtml = `
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">CO₂ Footprint Analysis</h5>
+            <p class="card-text"><strong>Total Estimated CO₂ Footprint:</strong> <span id="co2-footprint-value">${data.total_co2_footprint_kg || "N/A"}</span> kg</p>
+           
+            <h6 class="card-subtitle mb-2 text-muted">Item Breakdown</h6>
+            <ul class="list-group list-group-flush">
+                ${data.items.map(item => `
+                    <li class="list-group-item">
+                        <strong>${item.item}</strong>: ${item.estimated_co2_footprint_kg || "N/A"} kg CO₂
+                    </li>
+                `).join('')}
+            </ul>
+             <button id="update-co2-btn" class="btn btn-primary">Update CO₂ Footprint</button>
+        </div>
+    </div>
+`;
+
+resultContainer.innerHTML = cardHtml;
+
+document.getElementById('update-co2-btn').addEventListener('click', updateCO2Footprint);
+function updateCO2Footprint(){
+// Insert the card into the DOM (assuming 'resultContainer' is a div in your HTML)
+const resultContainer = document.getElementById('resultContainer');
+// Get the current value from the element and convert it to a number
+let currentFootprint = parseFloat(document.getElementById("monthly-footprint").textContent) || 0;
+
+// Add the new CO₂ value
+currentFootprint += parseFloat(data.total_co2_footprint_kg);
+
+// Update the element with the new total CO₂ footprint
+document.getElementById("monthly-footprint").textContent = currentFootprint.toFixed(2);
+};
+        
+
+    } else {
+        resultSuggestion.textContent = "Error analyzing CO₂ footprint.";
+    }
+    } catch (error) {
+      console.error("Error processing bill:", error);
+      resultMessage.innerHTML = `<i class="fas fa-times-circle text-danger"></i> Error processing bill`;
+    }
+  });
+});
+
+    
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      async function fetchBreakdown() {
+          try {
+              const response = await fetch('/activityRoute2/category-breakdown');
+              const data = await response.json();
+
+              // Prepare data for the chart
+              const labels = data.map(item => item._id); // ['Emission', 'Reduction']
+              const values = data.map(item => item.totalCo2); // Total CO2 values
+
+              // Render chart
+              const ctx = document.getElementById('categoryChart').getContext('2d');
+              new Chart(ctx, {
+                  type: 'bar', // Change to bar chart
+                  data: {
+                      labels: labels,
+                      datasets: [{
+                          label: 'CO2 Emission and Reduction', // Label for the dataset
+                          data: values,
+                          backgroundColor: ['#FF6384', '#36A2EB'], // Colors for categories
+                          borderColor: ['#FF6384', '#36A2EB'], // Border colors for each bar
+                          borderWidth: 1
+                      }]
+                  },
+                  options: {
+                      responsive: true,
+                      scales: {
+                          y: {
+                              beginAtZero: true, // Ensure the y-axis starts from 0
+                              title: {
+                                  display: true,
+                                  text: 'Total CO2 (kg)' // Y-axis label
+                              }
+                          }
+                      },
+                      plugins: {
+                          legend: {
+                              position: 'top'
+                          },
+                          tooltip: {
+                              callbacks: {
+                                  label: function (tooltipItem) {
+                                      const value = tooltipItem.raw;
+                                      return `${tooltipItem.label}: ${value.toFixed(2)} kg CO2`; // Tooltip format
+                                  }
+                              }
+                          }
+                      }
+                  }
+              });
+          } catch (error) {
+              console.error('Error fetching breakdown:', error);
+          }
+      }
+
+      fetchBreakdown();
+  });
+</script>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Event listeners for each form
+      const forms = document.querySelectorAll("form");
+  
+      forms.forEach(form => {
+        form.addEventListener("submit", event => {
+          event.preventDefault();
+  
+          // Fetch values based on the category
+          const category = form.closest(".tab-pane").id;
+  
+          if (category === "transportation") {
+            const milesDriven = Number(document.getElementById("miles-driven").value || 0);
+            console.log(milesDriven)
+            const carpool = Number(document.getElementById("carpool").value || 0);
+            const flights = Number(document.getElementById("flights").value || 0);
+  
+            // Calculate transportation footprint
+            const transportationFootprint = (milesDriven * 0.2) + (flights * 200) - (carpool * 5);
+            updateProgress("progress-transportation", transportationFootprint, 1000);
+          } else if (category === "energy") {
+            const electricity = Number(document.getElementById("electricity-usage").value || 0);
+            const naturalGas = Number(document.getElementById("natural-gas").value || 0);
+            const heatingOil = Number(document.getElementById("heating-oil").value || 0);
+             
+            // Calculate energy footprint
+            const energyFootprint = (electricity * 0.5) + (naturalGas * 0.8) + (heatingOil * 2);
+            updateProgress("progress-energy", energyFootprint, 500);
+          } else if (category === "food") {
+            const meatMeals = Number(document.getElementById("meat-meals").value || 0);
+            const vegetarianMeals = Number(document.getElementById("vegetarian-meals").value || 0);
+            const dairyConsumption = Number(document.getElementById("dairy-consumption").value || 0);
+  
+            // Calculate food footprint
+            const foodFootprint = (meatMeals * 5) + (vegetarianMeals * 2) + (dairyConsumption * 1.5);
+            updateProgress("progress-food", foodFootprint, 300);
+          }
+  
+          // Recalculate total footprint
+          recalculateTotals();
+        });
+      });
+  
+      // Function to update progress bar
+      function updateProgress(barId, value, max) {
+        const progressBar = document.getElementById(barId);
+        const percentage = Math.min((value / max) * 100, 100);
+        progressBar.style.width = `${percentage}%`;
+        progressBar.textContent = `${Math.round(percentage)}%`;
+      }
+  
+      // Recalculate total annual and monthly footprints
+      function recalculateTotals() {
+        const transport = getProgressValue("progress-transportation");
+        const energy = getProgressValue("progress-energy");
+        const food = getProgressValue("progress-food");
+ 
+        const annualFootprint = transport + energy + food;
+        console.log(annualFootprint)
+        const monthlyFootprint = annualFootprint / 12;
+        document.getElementById("annual-footprint").textContent = Math.round(annualFootprint);
+        document.getElementById("monthly-footprint").textContent = Math.round(monthlyFootprint);
+      }
+  
+      // Helper function to get progress bar values
+      function getProgressValue(barId) {
+        const progressBar = document.getElementById(barId);
+        const percentage = parseInt(progressBar.style.width);
+        const maxValue = parseInt(progressBar.dataset.max || 1000);
+        return (percentage / 100) * maxValue;
+      }
+    });
+  </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let myPieChart; // Declare myPieChart outside to maintain its reference
+
+  document.querySelector('#stupin').addEventListener('click', async function (event) {
+      event.preventDefault(); // Prevent the default form submission
+      // Retrieve the annual and monthly footprints from the page
+      const annualFootprint1 = parseFloat(document.getElementById('annual-footprint').textContent);
+      const monthlyFootprint1 = parseFloat(document.getElementById('monthly-footprint').textContent);
+      const transport = getProgressValue("progress-transportation");
+      const energy = getProgressValue("progress-energy");
+      const food = getProgressValue("progress-food");
+
+      const formData = {
+          monthlyFootprint: monthlyFootprint1,
+          annualFootprint: annualFootprint1,
+          transport: transport,
+          energy: energy,
+          food: food
+      };
+
+      try {
+          // Send the calculated data to the backend
+          const response = await fetch('/calculate/log', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(formData) // Send the data as JSON
+          });
+          console.log(response);
+
+          const data = await response.json();
+          const categories = data.categories.map(item => item.label);
+          const co2Values = data.categories.map(item => item.value);
+
+          // 1. Destroy the existing chart if it exists
+          if (myPieChart) {
+              myPieChart.destroy();
+          }
+
+          // 2. Create doughnut chart with fetched data
+const ctx = document.getElementById('myPieChart').getContext('2d');
+myPieChart = new Chart(ctx, {
+    type: 'doughnut',  // Change chart type to 'doughnut'
+    data: {
+        labels: categories,
+        datasets: [{
+            data: co2Values,
+            backgroundColor: ['#52b788', '#ffadad', '#ffb84d', '#ffd700', '#ff9999'],
+            borderWidth: 3,  // Add a border to the segments for better visibility
+        }]
+    },
+    options: {
+        responsive: true,
+        cutoutPercentage: 50,  // Adjust the "hole" in the center of the doughnut
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    font: {
+                        size: 14,  // Customize legend font size
+                    }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2) + ' kg CO₂';  // Tooltip customization
+                    }
+                }
+            }
+        }
+    }
+});
+
+
+          // Handle successful response if needed
+          if (response.ok) {
+              console.log('Data saved successfully');
+          }
+      } catch (error) {
+          console.error('Error saving data:', error);
+      }
+  });
+
+  // Helper function to get progress bar values
+  function getProgressValue(barId) {
+      const progressBar = document.getElementById(barId);
+      const percentage = parseInt(progressBar.style.width);
+      const maxValue = parseInt(progressBar.dataset.max || 1000);
+      return (percentage / 100) * maxValue;
+  }
+});
+</script>
+
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+       const submitButton = document.getElementById('submitButton');
+       const uploadForm = document.getElementById('uploadForm');
+       const resultSuggestion = document.getElementById('suggestion');
+
+       submitButton.addEventListener('click', async function (event) {
+           event.preventDefault(); // Prevent default form submission
+
+           const formData = new FormData(uploadForm);
+
+           try {
+    const response = await fetch('/dashboard/waste', {
+        method: 'POST',
+        body: formData
+    });
+
+    if (response.ok) {
+        const result = await response.json();
+        console.log(result);
+
+        // Parse the stringified JSON in the 'wasteType' field
+        let data;
+        try {
+            data = JSON.parse(result.wasteType);
+            console.log(data.object)
+        } catch (parseError) {
+            console.error("Error parsing wasteType:", parseError);
+            resultSuggestion.textContent = "Error parsing CO₂ footprint data.";
+            return;
+        }
+
+        // Create the Bootstrap card
+        const cardHtml = `
+      <div class="card" style="width: 18rem>
+
+                <div class="card-body ">
+                    <h5 class="card-title">CO₂ Footprint Analysis</h5>
+                    <p class="card-text"><strong>Dedected Object:</strong> ${data.object || "N/A"}</p>
+                    <p class="card-text"><strong>Estimated CO₂ Footprint:</strong> ${data.estimated_co2_footprint_kg || "N/A"} kg</p>
+                </div>
+     
+         </div>
+        `;
+
+        // Insert the card into the DOM (assuming 'resultContainer' is a div in your HTML)
+        const resultContainer = document.getElementById('resultContainer');
+        resultContainer.innerHTML = cardHtml;
+
+    } else {
+        resultSuggestion.textContent = "Error analyzing CO₂ footprint.";
+    }
+} catch (error) {
+    console.error("Error:", error);
+    resultSuggestion.textContent = "Something went wrong. Please try again.";
+}
+ 
+
+       });
+   });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

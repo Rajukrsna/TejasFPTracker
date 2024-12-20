@@ -1,0 +1,79 @@
+ /* General Body Styling */
+ body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f9f4; /* Soft natural green background */
+    margin: 0;
+    padding: 0;
+    color: #2d6a4f; /* Dark green for text */
+}
+
+/* Main Content Styling */
+.container {
+    margin-top: 70px;
+    padding: 25px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Softer shadow */
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-control {
+    padding-left: 2.5rem; /* Adds space for the icons */
+    border: 2px solid #74c69d; /* Subtle green border */
+    border-radius: 8px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #52b788; /* Darker green on focus */
+    box-shadow: 0 0 8px rgba(82, 183, 136, 0.5);
+}
+
+.form-label {
+    font-weight: bold;
+    color: #2d6a4f;
+}
+
+.btn-primary {
+    background-color: #40916c; /* Dark green */
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.btn-primary:hover {
+    background-color: #52b788; /* Slightly lighter green on hover */
+}
+
+h1 {
+    color: #40916c;
+    font-weight: bold;
+}
+
+/* Link Styling */
+a {
+    color: #52b788;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #40916c;
+    text-decoration: underline;
+}
+
+/* Icon Styling */
+.icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #74c69d;
+}
+
+.form-group {
+    position: relative;
+}

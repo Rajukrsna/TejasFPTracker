@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tejas Footprint-CO2 Tracker</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/public/layoutstyle.css">
+    <style>
+        body {
+            background: url('https://www.transparenttextures.com/patterns/black-linen.png'), linear-gradient(135deg, #eef2f3, #8e9eab);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .vertical-navbar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #343a40;
+            padding-top: 20px;
+            color: white;
+        }
+
+        .vertical-navbar .navbar-brand {
+            padding-left: 20px;
+            padding-right: 50px;
+            font-size: 1.5rem;
+        }
+
+        .vertical-navbar .nav-link {
+            color: rgb(255, 255, 255) !important;
+            padding-top: 20px;
+            padding-left: 20px !important;;
+        }
+
+        .vertical-navbar .nav-link:hover {
+            background-color: #495057;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .horizontal-navbar {
+            width: calc(100% - 250px);
+            position: fixed;
+            top: 0;
+            left: 250px;
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            z-index: 1;
+        }
+
+        .horizontal-navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .horizontal-navbar .icons {
+            display: flex;
+            align-items: center;
+        }
+
+        .horizontal-navbar .icons i {
+            font-size: 1.2rem;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        #points-display {
+  font-weight: bold;
+  color: #28a745;
+  transition: color 0.5s ease;
+}
+
+#points-display.animated {
+  color: #ffc107;
+}
+
+        .horizontal-navbar .profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .horizontal-navbar .user-points {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        footer {
+            margin-left: 250px;
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Vertical Navbar -->
+    <nav class="vertical-navbar">
+        <a class="navbar-brand" href="/">
+            <img src="/public/T.jpg" alt="logo" width="30"> Tejas3.o
+        </a>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/calculate">
+                    <i class="fas fa-calculator"></i> Calculate
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/activityRoutes">
+                    <i class="fas fa-heartbeat"></i> Log Activity
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/contest">
+                    <i class="fa fa-medal"></i> Contest
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/leaderboard">
+                    <i class="fas fa-trophy"></i> Leaderboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/badgesRedeem">
+                    <i class="fas fa-medal"></i> Claim Rewards
+                </a>
+            </li>
+             
+            <% if (typeof user !== 'undefined' && user) { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </li>
+            <% } %>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-lock"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Horizontal Navbar -->
+    <nav class="horizontal-navbar">
+        <% if (typeof user !== 'undefined' && user) { %>
+        <div class="logo"><%=user.username%> </div>
+        <% } %>
+        <div class="icons">
+            <i class="fas fa-bell"></i>
+            <% if (typeof user !== 'undefined' && user) { %>
+          
+                <img src="<%= user.profileImage %>" alt="Profile" class="profile-image">
+          
+                    <div class="points-section">
+                      <span>Your Points: <span id="points-display"><%=user.points %></span></span>
+                    </div>
+                
+
+
+
+            <% } %>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <%- body %>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 CO₂ Footprint Tracker. All rights reserved.</p>
+    </footer>
+
+
+
+  <!-- Chatbot Icon -->
+<div id="chatbot-icon" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; cursor: pointer;">
+    <img src="https://i.ibb.co/YpZq7ft/aimen.webp" alt="Chatbot" style="width: 70px; height: 70px; border-radius: 50%; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); transition: transform 0.3s;">
+</div>
+
+<!-- Chatbot Box -->
+<div id="chatbot-box" style="display: none; position: fixed; bottom: 80px; right: 20px; width: 350px; height: 500px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); z-index: 1001; transition: all 0.3s ease;">
+    <div style="background :linear-gradient(45deg, #ff6f61, #ffbc00); color: white; padding: 15px; border-top-left-radius: 15px; border-top-right-radius: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 18px; font-weight: bold;">Welcome to Printonica</span>
+        <button id="chatbot-close" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
+    </div>
+    <div id="chatbot-messages" style="padding: 15px; overflow-y: auto; height: calc(100% - 100px); font-size: 16px;">
+        <!-- Messages will appear here -->
+    </div>
+    <form id="chatbot-form" style="display: flex; padding: 10px; border-top: 1px solid #ddd; background: #f9f9f9;">
+        <input type="text" id="chatbot-input" placeholder="Type your message..." style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 16px;">
+        <button type="submit" style="background: #007BFF; color: white; border: none; padding: 12px 18px; margin-left: 10px; border-radius: 25px; cursor: pointer; font-size: 16px;">Send</button>
+    </form>
+</div>
+
+<script>
+    // Show/Hide Chatbot
+    document.getElementById('chatbot-icon').addEventListener('click', function () {
+        const chatbotBox = document.getElementById('chatbot-box');
+        chatbotBox.style.display = chatbotBox.style.display === 'none' ? 'block' : 'none';
+    });
+
+    document.getElementById('chatbot-close').addEventListener('click', function () {
+        document.getElementById('chatbot-box').style.display = 'none';
+    });
+
+    // Chatbot Interaction
+    const chatbotForm = document.getElementById('chatbot-form');
+    const chatbotInput = document.getElementById('chatbot-input');
+    const chatbotMessages = document.getElementById('chatbot-messages');
+
+    chatbotForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const userMessage = chatbotInput.value.trim();
+    if (!userMessage) return;
+
+    // Display user's message
+    const userBubble = document.createElement('div');
+    userBubble.textContent = userMessage;
+    userBubble.style = `
+        background: #f1f1f1; 
+        margin: 10px; 
+        padding: 12px; 
+        border-radius: 20px; 
+        align-self: flex-end; 
+        max-width: 80%; 
+        word-wrap: break-word; 
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    `;
+    chatbotMessages.appendChild(userBubble);
+
+    // Clear input
+    chatbotInput.value = '';
+
+    // Fetch bot response
+    try {
+        const response = await fetch('/chat/chat2', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userMessage }),
+        });
+
+        const data = await response.json();
+
+        // Create a container for the formatted response
+        const botBubble = document.createElement('div');
+        botBubble.innerHTML = formatBotResponse(data.reply || 'Something went wrong!');
+        botBubble.style = `
+            background: #007BFF; 
+            color: white; 
+            margin: 10px; 
+            padding: 12px; 
+            border-radius: 20px; 
+            align-self: flex-start; 
+            max-width: 80%; 
+            word-wrap: break-word; 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        `;
+        chatbotMessages.appendChild(botBubble);
+    } catch (err) {
+        console.error('Error:', err);
+        const errorBubble = document.createElement('div');
+        errorBubble.textContent = 'Failed to connect to the chatbot.';
+        errorBubble.style = `
+            background: red; 
+            color: white; 
+            margin: 10px; 
+            padding: 12px; 
+            border-radius: 20px; 
+            align-self: flex-start; 
+            max-width: 80%; 
+            word-wrap: break-word;
+        `;
+        chatbotMessages.appendChild(errorBubble);
+    }
+
+    // Scroll to the latest message
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+});
+
+// Function to format the bot's response as HTML
+function formatBotResponse(responseText) {
+    // Format response with basic HTML replacements
+    return responseText
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')    // Bold text (for **bold**)
+        .replace(/(\d+\.)\s/g, '<br><strong>$1</strong> ')   // Numbered lists
+        .replace(/- (.*?)$/gm, '<li>$1</li>')                // Bulleted lists
+        .replace(/\n/g, '<br>')                              // New lines
+        .replace(/<li>(.*?)<\/li>/g, '<ul><li>$1</li></ul>') // Wrap <li> in <ul>
+        .replace(/<\/ul>\n<ul>/g, '');                       // Merge consecutive <ul> blocks
+}
+
+</script>
+
+ <!-- Bootstrap JS and Dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

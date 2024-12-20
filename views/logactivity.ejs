@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Points - CO₂ Tracker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome -->
+    <link rel="stylesheet" href="/public/logactivity.css">
+</head>
+<style>
+     .container {
+  background-color: transparent !important; /* Ensures no background color */
+  padding: 80px !important; /* Optional: Add padding for better content spacing */
+  box-shadow: none; /* Remove any default shadow if applied */
+}
+/* Graph Panel */
+.graph-panel {
+    position: fixed;
+    top: 0;
+    right: -350px; /* Initially hidden off-screen */
+    width: 350px;
+    height: 100%;
+    background-color: #f8f9fa;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Arrow Button */
+.toggle-button {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1001;
+    border-radius: 5px 0 0 5px;
+    transition: right 0.3s ease;
+}
+
+.toggle-button i {
+    font-size: 1.5rem;
+}
+
+</style>
+<body>
+    <!-- Main Content -->
+<div class="container">
+        <h1 class="text-center mb-4">Earn Points by Uploading Proof</h1>
+        <div class="row text-center">
+            <!-- Category Cards -->
+            <div class="col-md-4 mb-4">
+                <div class="card category-card" data-bs-toggle="modal" data-bs-target="#uploadModal" data-category="Used Bicycle">
+                    <a href=""><img src="https://i.ibb.co/80MtHpm/cycle.jpg" class="card-img-top category-img" alt="cycle"></a>
+                    <div class="card-body category-card-body">
+                        <h5 class="card-title">Used Bicycle as Transport</h5>
+                        <p class="card-text">Earn points by showing proof of using a bicycle for transport.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card category-card" data-bs-toggle="modal" data-bs-target="#uploadModal" data-category="Recycled Plastic">
+                    <a href=""><img src="https://i.ibb.co/LC3yssm/plastic.jpg" class="card-img-top category-img" alt="plastic"></a>
+                    <div class="card-body category-card-body">
+                        <h5 class="card-title">Recycled Plastic</h5>
+                        <p class="card-text">Upload proof of recycling plastic to earn points.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card category-card" data-bs-toggle="modal" data-bs-target="#uploadModal" data-category="Ate Veg Full Day">
+                    <a href=""><img src="https://i.ibb.co/qYMcPsL/veg.jpg" class="card-img-top category-img" alt="veg"></a>
+                    <div class="card-body category-card-body">
+                        <h5 class="card-title">Ate Veg Full Day</h5>
+                        <p class="card-text">Earn points for eating only vegetables for an entire day!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Category Cards -->
+            <div class="col-md-4 mb-4">
+                <div class="card category-card" data-bs-toggle="modal" data-bs-target="#uploadModal" data-category="Carpooling">
+                    <a href=""><img src="https://i.ibb.co/6JKjtpy/pool.png" class="card-img-top category-img" alt="pool"></a>
+                    <div class="card-body category-card-body">
+                        <h5 class="card-title">Carpooling</h5>
+                        <p class="card-text">Earn points by carpooling with others instead of driving alone.</p>
+                    </div>
+                </div>
+            </div>
+            <div id="messageBox" style="display: none; text-align: center; padding: 20px; margin: 20px auto; max-width: 400px; border-radius: 10px;"></div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card category-card" data-bs-toggle="modal" data-bs-target="#uploadModal" data-category="Zero Waste Shopping">
+                    <a href=""><img src="https://i.ibb.co/Zxpq60d/zerowaste.jpg" class="card-img-top category-img" alt="zerowaste"></a>
+                    <div class="card-body category-card-body">
+                        <h5 class="card-title">Zero Waste Shopping</h5>
+                        <p class="card-text">Earn points for shopping with zero waste practices.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card category-card" data-bs-toggle="modal" data-bs-target="#uploadModal" data-category="Planted Tree">
+                    <a href=""><img src="https://i.ibb.co/qjjL51B/tree.jpg" class="card-img-top category-img" alt="tree"></a>
+                    <div class="card-body category-card-body">
+                        <h5 class="card-title">Planted a Tree</h5>
+                        <p class="card-text">Earn points by showing proof of planting a tree.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card category-card" data-bs-toggle="modal" data-bs-target="#uploadModal" data-category="Switch to LED Bulbs">
+                    <a href=""><img src="https://i.ibb.co/QvTChD4/bulb.jpg" class="card-img-top category-img" alt="bulb"></a>
+                    <div class="card-body category-card-body">
+                        <h5 class="card-title">Switch to LED Bulbs</h5>
+                        <p class="card-text">Earn points for switching your home lighting to energy-efficient LED bulbs.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card category-card" data-bs-toggle="modal" data-bs-target="#uploadModal" data-category="Plastic-Free Packaging">
+                    <a href=""><img src="https://i.ibb.co/xJRhgKb/plasticf.jpg" class="card-img-top category-img" alt="plasticf"></a>
+                    <div class="card-body category-card-body">
+                        <h5 class="card-title">Plastic-Free Packaging</h5>
+                        <p class="card-text">Earn points by opting for plastic-free packaging when shopping.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graph Panel -->
+<div id="graphPanel" class="graph-panel">
+    <div class="graph-content">
+        <h4 class="text-center mb-3">Your Points Insights</h4>
+        <canvas id="pointsGraph" width="300" height="200"></canvas>
+    </div>
+    <div class="graph-content">
+        <h4>Emission Vs Reduction for <%= new Date().toLocaleString('default', { month: 'long' }) %></h4>
+        <canvas id="categoryChart" width="400" height="400"></canvas>
+    </div>
+</div>
+
+<!-- Arrow Button to Toggle Panel -->
+<button id="toggleButton" class="toggle-button">
+    <i class="fas fa-chevron-left"></i>
+</button>
+
+    <!-- Modal for Uploading Proof -->
+    <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadModalLabel">Upload Proof</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="modal-category-title">Upload your proof for:</h4>
+                    <!-- Form for uploading image -->
+                    <div id="previewContainer" class="text-center mt-3">
+                        <!-- Image or PDF preview will be shown here -->
+                      </div>
+                    <form id="uploadForm" action="/photoProofRoutes/upload" method="POST" enctype="multipart/form-data">
+                        <input type="file" class="form-control mb-3" name="image" required>
+                        <!-- Hidden input for category -->
+                        <input type="hidden" name="category" id="categoryInput">
+                        <input type="hidden" name="val" value="false">
+
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const graphPanel = document.getElementById('graphPanel');
+        const toggleButton = document.getElementById('toggleButton');
+        const toggleIcon = toggleButton.querySelector('i');
+    
+        // Toggle the graph panel visibility
+        toggleButton.addEventListener('click', () => {
+            if (graphPanel.style.right === '0px') {
+                graphPanel.style.right = '-350px';
+                toggleIcon.classList.replace('fa-chevron-right', 'fa-chevron-left');
+            } else {
+                graphPanel.style.right = '0px';
+                toggleIcon.classList.replace('fa-chevron-left', 'fa-chevron-right');
+            }
+        });
+    
+        // Initialize the graph with example data using Chart.js
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('pointsGraph').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Bicycle', 'Recycled Plastic', 'Veg Day', 'Carpool', 'Tree Planting'],
+                    datasets: [{
+                        label: 'Points Earned',
+                        data: [10, 15, 20, 25, 30], // Example data points
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    <!-- Include Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            async function fetchBreakdown() {
+                try {
+                    const response = await fetch('/activityRoute2/category-breakdown');
+                    const data = await response.json();
+      
+                    // Prepare data for the chart
+                    const labels = data.map(item => item._id); // ['Emission', 'Reduction']
+                    const values = data.map(item => item.totalCo2); // Total CO2 values
+      
+                    // Render chart
+                    const ctx = document.getElementById('categoryChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar', // Change to bar chart
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'CO2 Emission and Reduction', // Label for the dataset
+                                data: values,
+                                backgroundColor: ['#FF6384', '#36A2EB'], // Colors for categories
+                                borderColor: ['#FF6384', '#36A2EB'], // Border colors for each bar
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true, // Ensure the y-axis starts from 0
+                                    title: {
+                                        display: true,
+                                        text: 'Total CO2 (kg)' // Y-axis label
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'top'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (tooltipItem) {
+                                            const value = tooltipItem.raw;
+                                            return `${tooltipItem.label}: ${value.toFixed(2)} kg CO2`; // Tooltip format
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error fetching breakdown:', error);
+                }
+            }
+      
+            fetchBreakdown();
+        });
+      </script>
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        // Update modal title based on selected category
+        const categoryCards = document.querySelectorAll('.category-card');
+        categoryCards.forEach(card => {
+            card.addEventListener('click', function () {
+                const category = this.getAttribute('data-category');
+                document.getElementById('modal-category-title').innerText = `Upload your proof for: ${category}`;
+                // Set category in hidden input
+                document.getElementById('categoryInput').value = category;
+            });
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent form submission
+            const formData = new FormData(e.target);
+console.log(formData)
+            try {
+                const response = await fetch('/photoProofRoutes/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const result = await response.json();
+console.log(result);
+                // Hide the modal
+                const uploadModal = document.getElementById('uploadModal');
+                const modalInstance = bootstrap.Modal.getInstance(uploadModal);
+                modalInstance.hide();
+
+                // Display the message box
+                const messageBox = document.getElementById('messageBox');
+                messageBox.style.display = 'block';
+
+                if (result.ok === 'success') {
+                    animatePointsUpdate(result.newPoints);
+                    messageBox.style.backgroundColor = '#d4edda'; // Green background for success
+                    messageBox.style.color = '#155724'; // Dark green text
+                } else {
+                    messageBox.style.backgroundColor = '#f8d7da'; // Red background for error
+                    messageBox.style.color = '#721c24'; // Dark red text
+                }
+
+                messageBox.innerHTML = result.message;
+                
+                // Hide the message box after 3 seconds
+                setTimeout(() => {
+                    messageBox.style.display = 'none';
+                    window.location.reload();
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
+        });
+
+
+
+        function animatePointsUpdate(newPoints) {
+    const pointsDisplay = document.getElementById('points-display');
+    const oldPoints = parseInt(pointsDisplay.textContent, 10);
+
+    // Create an animation effect
+    let currentPoints = oldPoints;
+    const step = (newPoints - oldPoints) / 50; // Increment step for smoother animation
+
+    function update() {
+      currentPoints += step;
+      pointsDisplay.textContent = Math.round(currentPoints);
+
+      if ((step > 0 && currentPoints < newPoints) || (step < 0 && currentPoints > newPoints)) {
+        requestAnimationFrame(update);
+      } else {
+        pointsDisplay.textContent = newPoints;
+      }
+    }
+
+    update();
+  }
+    </script>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('change', function (event) {
+          const file = event.target.files[0];
+          const previewContainer = document.getElementById('previewContainer');
+          previewContainer.innerHTML = ''; // Clear previous preview
+      
+          if (file) {
+            if (file.type.startsWith('image/')) {
+              // Preview for images
+              const img = document.createElement('img');
+              img.src = URL.createObjectURL(file);
+              img.style.maxWidth = '100%';
+              img.style.maxHeight = '400px';
+              img.classList.add('mt-2');
+              previewContainer.appendChild(img);
+            } else if (file.type === 'application/pdf') {
+              // Preview for PDFs
+              const embed = document.createElement('embed');
+              embed.src = URL.createObjectURL(file);
+              embed.type = 'application/pdf';
+              embed.width = '100%';
+              embed.height = '400px';
+              embed.classList.add('mt-2');
+              previewContainer.appendChild(embed);
+            } else {
+              previewContainer.innerHTML = '<p class="text-danger">Unsupported file type.</p>';
+            }
+          }
+        });
+      </script>
+</body>
+
+</html>

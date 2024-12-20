@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contest Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif !important;
+            
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px;
+            margin-top: 20px;
+            background-color: transparent !important; 
+        }
+
+        /* Left Section */
+        .left-section {
+            width: 30%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+        }
+
+        .contest-title {
+            font-size: 24px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .contest-points {
+            font-size: 36px;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .contest-image img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Right Section */
+        .right-section {
+            width: 65%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery {
+            margin-bottom: 20px;
+        }
+
+        .gallery h3 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* Upload Section */
+        .upload-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #image-upload {
+            margin-bottom: 10px;
+            border: 2px solid #ccc;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .message-box {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 400px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Left Section: Contest Info -->
+        <div class="left-section">
+            <div class="contest-title"><%= contest.title %></div>
+            <div class="contest-points" id="points"></div>
+            <div class="contest-image">
+                <img src="<%= contest.img %>" alt="Contest Image">
+            </div>
+        </div>
+
+        <!-- Right Section: Image Gallery and Upload -->
+        <div class="right-section">
+            <div class="gallery">
+                <h3>Image Gallery</h3>
+                <div id="image-gallery" class="gallery-container"></div>
+                <div id="previewContainer" class="text-center mt-3">
+                    <!-- Image or PDF preview will be shown here -->
+                  </div>
+            </div>
+
+            <div class="upload-container">
+                
+                <h3>Upload Image</h3>
+                <form id="uploadForm" action="/photoProofRoutes/upload" method="POST" enctype="multipart/form-data">
+                    <label for="bill" class="form-label">Upload Your Proofs(Images Only)</label>
+                    <input type="file" class="form-control mb-3" name="image" required id="bill">
+                    <input type="hidden" name="val" value="true">
+
+                    <input type="hidden" name="category" id="categoryInput" value="<%= contest.field %>">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="messageBox" class="message-box"></div>
+
+
+   
+<script>
+let points = 0; // Initial points, you can set this to the correct initial value if needed.
+
+const contestId = '<%= contest.id %>';
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault(); // Prevent form submission
+    const formData = new FormData(e.target);
+
+    try {
+        const response = await fetch('/photoProofRoutes/upload', {
+            method: 'POST',
+            body: formData,
+        });
+        const result = await response.json();
+        console.log(result)
+        const messageBox = document.getElementById('messageBox');
+        if (messageBox) { // Check if messageBox exists
+            messageBox.style.display = 'block';
+
+            if (result.message ==='Points awarded successfully!') {
+                 // Increase points by 5 for each successful upload
+                 console.log("ehlhls")
+                 points += 5;
+                updatePointsDisplay();
+                messageBox.style.backgroundColor = '#d4edda'; // Green background for success
+                messageBox.style.color = '#155724'; // Dark green text
+            } else {
+                messageBox.style.backgroundColor = '#f8d7da'; // Red background for error
+                messageBox.style.color = '#721c24'; // Dark red text
+            }
+
+            messageBox.innerHTML = result.message;
+
+            // Reload the page to display the new image in the gallery
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            
+            }, 3000);
+        }
+    } catch (error) {
+        console.error('Error uploading file:', error);
+    }
+});
+function updatePointsDisplay() {
+    document.getElementById('points').textContent = points;
+}
+// Function to fetch and display images in the gallery
+async function fetchImages() {
+    const response = await fetch('/photoProofRoutes/images/${contestId}');
+    console.log(response);
+    const images = await response.json();
+    console.log(images);
+
+    const galleryContainer = document.getElementById('image-gallery');
+    if (galleryContainer) { // Check if the gallery container exists
+        galleryContainer.innerHTML = ''; // Clear previous gallery images
+
+        images.images.forEach(image => {
+            const imgElement = document.createElement('div');
+           imgElement.classList.add('gallery-item');
+            imgElement.innerHTML = `<img src="${image.url}" alt="Image">`;
+           galleryContainer.appendChild(imgElement);
+     });
+    }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    points = parseInt(document.getElementById('points').textContent) || 0;
+    updatePointsDisplay();
+    
+});
+
+// Fetch images when the DOM is fully loaded
+</script>
+<script>
+    document.getElementById('bill').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      const previewContainer = document.getElementById('previewContainer');
+      previewContainer.innerHTML = ''; // Clear previous preview
+  
+      if (file) {
+        if (file.type.startsWith('image/')) {
+          // Preview for images
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          img.style.maxWidth = '100%';
+          img.style.maxHeight = '400px';
+          img.classList.add('mt-2');
+          previewContainer.appendChild(img);
+        } else if (file.type === 'application/pdf') {
+          // Preview for PDFs
+          const embed = document.createElement('embed');
+          embed.src = URL.createObjectURL(file);
+          embed.type = 'application/pdf';
+          embed.width = '100%';
+          embed.height = '400px';
+          embed.classList.add('mt-2');
+          previewContainer.appendChild(embed);
+        } else {
+          previewContainer.innerHTML = '<p class="text-danger">Unsupported file type.</p>';
+        }
+      }
+    });
+  </script>
+  
+</body>
+
+</html>

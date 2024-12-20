@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/leaderboard.css">
+    <style>
+        
+     /* General Styles */
+.transactions-container {
+    
+    margin: 20px auto;
+    width: 90%;
+    max-width: 600px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+}
+
+.transactions-heading {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    ;
+}
+
+/* Transaction Cards */
+.transaction-scroll-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #888 transparent;
+
+}
+
+
+body {
+        background: url('https://www.toptal.com/designers/subtlepatterns/uploads/wavecut.png');
+
+  font-family: 'Poppins', sans-serif;
+  
+}
+/* Badge Section Styling */
+.badge-section {
+    text-align: center;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 600px;
+    background-color: transparent !important; 
+
+}
+
+/* Badge Heading */
+.badge-heading {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.badge-subheading {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Badge Container */
+.badge-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Badge Styling */
+.badge {
+    text-align: center;
+    opacity: 0.5; /* Disabled badges */
+    transition: transform 0.3s, opacity 0.3s;
+    width: 80px;
+    cursor: pointer;
+}
+
+.badge.enabled {
+    opacity: 1; /* Fully visible for enabled badges */
+    transform: scale(1.1); /* Slight zoom for unlocked badges */
+}
+
+.badge img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.badge img:hover {
+    transform: scale(1.2); /* Zoom on hover */
+}
+
+.badge p {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #444;
+}
+
+.text-success {
+    color: green;
+}
+
+/* Scrollbar Customization */
+.transaction-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.transaction-scroll-container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+}
+
+/* Scrolling Effect */
+.transaction-scroll-container.scrolling {
+    overflow-y: scroll;
+}
+.transactions-box {
+    background-color: #f9f9f9; /* Light background */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 16px; /* Inner spacing */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    height: 400px; /* Fixed height for the box */
+    display: flex;
+    flex-direction: column;
+}
+
+.transactions-heading {
+    margin-bottom: 16px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-align: center; /* Center-align the heading */
+}
+
+.transaction-scroll-container {
+    flex-grow: 1;
+    overflow-y: auto; /* Enable vertical scrolling */
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Add spacing between transaction cards */
+    padding-right: 8px; /* Space to prevent scrollbars from overlapping */
+}
+
+.transaction-card {
+    background-color: #ffffff; /* Card background */
+    border: 1px solid #ddd; /* Card border */
+    border-radius: 6px; /* Rounded card corners */
+    padding: 12px; /* Inner padding for the card */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    font-size: 14px;
+    color: #555; /* Text color */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px; /* Consistent height for cards */
+}
+
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+    </style>
+</head>
+
+<body>
+    <div class ="container">
+        <h1 class="text-center mt-4">Leaderboard</h1>
+
+        <!-- Confetti Animation for Top Rank -->
+        <div class="confetti">
+            <span style="animation-delay: 0.2s;"></span>
+            <span style="animation-delay: 0.4s;"></span>
+            <span style="animation-delay: 0.6s;"></span>
+            <span style="animation-delay: 0.8s;"></span>
+            <span style="animation-delay: 1s;"></span>
+        </div>
+
+        <table class="table table-striped animate__animated animate__fadeIn">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Points</th>
+                    <th>Contest Points</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach((use, index) => { %>
+                    <tr class="<%= index === 0 ? 'animate__animated animate__flash' : '' %>">
+                        <td><%= index + 1 %>
+                            <span class="emoji">
+                                <%= index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '' %>
+                            </span>
+                        </td>
+                        <td><%= use.username %></td>
+                        <td><%= use.points %></td>
+                        <td>
+                           <%= use.contestPoints %>
+                        </td>
+                        
+                            
+
+                        
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+</div>
+        <div class="row mt-4">
+        <div class="container col-md-4">
+        <div>
+            <h3 class="transactions-heading">Recent Transactions</h3>
+            <div id="transactionContainer" class="transaction-scroll-container">
+                <!-- Transaction cards will be dynamically added here -->
+            </div>
+        </div>
+</div>
+<div class="col-md-4">
+    <div class="badge-section">
+        <h2 class="badge-heading">🏆 Achieved Badges</h2>
+        <p class="badge-subheading">Collect badges as you earn more points and unlock achievements!</p>
+    
+        <div class="badge-container">
+            <!-- Example Badge -->
+            <div class="badge enabled">
+                <img src="public/badge1oo.png" alt="Bronze Badge" />
+                <p>Bronze</p>
+            </div>
+            <div class="badge disabled">
+                <img src="public/badge2o.png" alt="Silver Badge" />
+                <p>Silver</p>
+            </div>
+            <div class="badge disabled">
+                <img src="public/Badge3.png" alt="Gold Badge" />
+                <p>Gold</p>
+            </div>
+            <div class="badge disabled">
+                <img src="public/badge4oo.jpg" alt="Gold Badge" />
+                <p>Diamond</p>
+            </div>
+            <div class="badge disabled">
+                <img src="public/badge5o.png" alt="Gold Badge" />
+                <p>Ruby</p>
+            </div>
+            <div class="badge disabled">
+                <img src="public/Badge6.png" alt="Gold Badge" />
+                <p>Crystal</p>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card legend-card">
+            <div class="card-header text-white bg-primary">
+                <h3 class="mb-0 text-center"><i class="fas fa-gift"></i> Redeem Points Guide</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-4">
+                        <h5><i class="fas fa-tree me-2 text-success"></i>20 Points - Plant a Tree</h5>
+                        <p class="text-muted">Help the environment and double your CO₂ reduction points!</p>
+                    </li>
+                    <li class="mb-4">
+                        <h5><i class="fas fa-bicycle me-2 text-warning"></i>30 Points - Get a Bicycle</h5>
+                        <p class="text-muted">Stay healthy and Triple Your CO2 Reduction Points.</p>
+                    </li>
+                    <li class="mb-4">
+                        <h5><i class="fas fa-motorcycle me-2 text-info"></i>40 Points - Electric Vehicle</h5>
+                        <p class="text-muted">Go electric and Get Your Points Quatrapiled</p>
+                    </li>
+                    
+                   
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    
+
+
+
+        <script>
+            
+            let transactionCount = 0;
+
+async function fetchTransactions() {
+    try {
+        const response = await fetch('photoProofRoutes/transactions'); // Replace with your API endpoint
+        const transactions = await response.json();
+
+        const transactionContainer = document.getElementById('transactionContainer');
+
+        // Clear the container only if fetching from scratch
+        if (transactionCount === 0) {
+            transactionContainer.innerHTML = '';
+        }
+
+        transactions.forEach((transaction, index) => {
+            if (index < transactionCount) return; // Skip already rendered transactions
+
+            // Create transaction card
+            const card = document.createElement('div');
+            card.classList.add('card', 'transaction-card', 'fade-in');
+
+           
+// Determine the transaction type and points display
+let pointsDisplay = '';
+if (transaction.pointsAwarded > 0) {
+    pointsDisplay = `<span class="text-success">+${transaction.pointsAwarded}</span>`;
+} else if (transaction.pointsReduced > 0) {
+    pointsDisplay = `<span class="text-danger">-${transaction.pointsReduced}</span>`;
+} else {
+    pointsDisplay = `<span class="text-muted">No points change</span>`;
+}
+
+card.innerHTML = `
+    <div class="card-body transaction-card">
+        <p class="card-text">Points: ${pointsDisplay}</p>
+        <p class="card-text"><small class="text-muted">${new Date(transaction.timestamp).toLocaleString()}</small></p>
+    </div>
+`;
+            transactionContainer.appendChild(card);
+
+            // Smooth scrolling effect if more than 5 cards exist
+            if (transactionContainer.children.length > 5) {
+                transactionContainer.classList.add('scrolling');
+            }
+        });
+
+        // Update the transaction count
+        transactionCount = transactions.length;
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+    }
+}
+
+// Call fetchTransactions when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    fetchTransactions();
+    setInterval(fetchTransactions, 5000); // Fetch new transactions every 5 seconds
+    
+});
+
+
+    </script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('/leaderboard/dashboard')
+        .then(response => response.json())
+        .then(userData => {
+            console.log("dfjdsk")
+            const badges = document.querySelectorAll('.badge');
+            badges.forEach(badge => {
+                const badgeNameElement = badge.querySelector('p');
+                if (!badgeNameElement) {
+                    console.error('Badge missing <p> element:', badge);
+                    return;
+                }
+                console.log(userData);
+                
+                const badgeName = badgeNameElement.textContent.trim();
+                const isBadgeEarned = userData.earned_badges.some(badgeObj => badgeObj.name === badgeName);
+                if (isBadgeEarned) {
+                    badge.classList.add('enabled');
+                    badge.classList.remove('disabled');
+                } else {
+                    badge.classList.add('disabled');
+                    badge.classList.remove('enabled');
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching leaderboard data:', error);
+        });
+});
+
+</script>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+   
+</body>
+
+</html>

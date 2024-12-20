@@ -1,0 +1,70 @@
+  /* General Body Styling */
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f7fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar Styling */
+
+
+.navbar-brand {
+    font-weight: bold;
+    color: white !important;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Making the logo round */
+    margin-right: 15px;
+    object-fit: cover; /* Ensuring the logo is contained in the circle */
+}
+
+.nav-link {
+    color: rgb(0, 0, 0) !important;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: #ffd700 !important; /* Golden color on hover */
+}
+
+/* Main Content Styling */
+
+#chatbot-messages {
+    padding: 10px;
+    overflow-y: auto;
+    height: calc(100% - 90px);
+    min-height: 300px; /* Ensure consistent height */
+    max-height: 400px; /* Prevent excessive expansion */
+}
+
+/* Footer Styling */
+footer {
+    background-color: transparent !important; /* Ensures no background color */
+
+    color: #333;
+    text-align: center;
+    padding: 15px;
+    
+}
+
+/* Custom Animations */
+.nav-item {
+    transition: transform 0.3s ease-in-out;
+}
+
+.nav-item:hover {
+    transform: scale(1.05);
+}
+
+/* Radiant Hover Effects */
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
